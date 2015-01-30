@@ -22,7 +22,7 @@ ratioPositionChord = [0 0.005 0.0125 0.025 0.050 0.075 0.10 0.20 0.25 0.30 : 0.1
 coefficientPressureExp = [1.000 0.454 0.067 -0.237 -0.450 -0.498 -0.520 -0.510 -0.484 -0.450 -0.369 -0.279 -0.206 -0.132 -0.049 0.055 0.128 1.000]';
 
 %% Calculations
-nSinks = 19;
+nSinks = 99;
 
 xSink = zeros(1, nSinks);
 for i = [1 : length(xSink)]
@@ -91,41 +91,23 @@ end
 %Pressure Coefficients
 velocityFreestream = sqrt(mean(u(:, 1)) .^ 2 + mean(v(:, 1)) .^ 2);
 [minEndAirfoil, indexEndAirfoil] = min(abs(xyAirfoil(:, 1) - 1));
-coefficientPressureSim = zeros(indexEndAirfoil - 1, 7);
-
-for k = [3 5 9 19 29 49 99]
-    
-xSinkNew = zeros(1, k);
-for l = [1 : length(xSinkNew)]
-    xSink(l) = l / (k + 1);
-end
-    
-M = zeros(k, k);
-for j = [1 : k]
-    for i = [1 : k]
-        M(j, i) = atan2(yAirfoil(j), (xSinkNew(j) - xSinkNew(i)));
-    end
-end
-
-R = -yAirfoil';
-sNew = M\R;
 
 uAirfoil = 1;
 vAirfoil = 0;
-for i = [1 : k]
-    uAirfoil = uAirfoil + sNew(i) .* (xyAirfoil(:, 1) - xSinkNew(i)) ./ ((xyAirfoil(:, 1)- xSinkNew(i)) .^ 2 + xyAirfoil(:, 2).^ 2);
-    vAirfoil = vAirfoil + sNew(i) .* xyAirfoil(:, 2)./ ((xyAirfoil(:, 1)- xSinkNew(i)) .^ 2 + xyAirfoil(:, 2).^ 2);
+for i = [1 : nSinks]
+    uAirfoil = uAirfoil + s(i) .* (xyAirfoil(:, 1) - xSink(i)) ./ ((xyAirfoil(:, 1)- xSink(i)) .^ 2 + xyAirfoil(:, 2).^ 2);
+    vAirfoil = vAirfoil + s(i) .* xyAirfoil(:, 2)./ ((xyAirfoil(:, 1) - xSink(i)) .^ 2 + xyAirfoil(:, 2).^ 2);
 end
 
 qAirfoil = sqrt(uAirfoil .^ 2 + vAirfoil .^ 2);
 coefficientPressureSim = 1 - (qAirfoil .^ 2) ./ (velocityFreestream .^ 2);
 
 %Root Mean Square Error
-sumDiffSq = 0;
-for n = [1 : indexEndAirfoil - 1]
-    sumDiffSq = sumDiffSq + (coefficientPressureSim(n) - interp1(ratioPositionChord, coefficientPressureExp, xyAirfoil(n, 1))) .^ 2;
+nSinkValues = [3 5 9 19 29 49 99];
+errorRMS = zeros(length(nSinkValues), 1);
+for n = [1 : length(nSinkValues)]
+    errorRMS(n) = p1bErrorRMS(nSinkValues(n));
 end
-errorRMS = sqrt(sumDiffSq ./ (indexEndAirfoil - 1));
 %% Plots
 
 %Source-Sink Distribution
@@ -140,5 +122,14 @@ plot(xSink, s, '-*')
 figure(3)
 hold on
 axis([0 1 -1 1])
+title('Pressure Coefficient Distribution [nSources = 19]')
+xlabel('Position (x/c)')
+ylabel('Cp')
 plot(ratioPositionChord, coefficientPressureExp, 'o', 'color', [1 0 0])
 plot(xyAirfoil(:, 1), coefficientPressureSim)
+
+%RMS Error
+figure(4)
+hold on
+
+loglog(nSinkValues, errorRMS, '-o')
