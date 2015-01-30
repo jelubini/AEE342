@@ -59,7 +59,7 @@ xy = zeros(N, 2);
 %Run Loop
 figure(1)
 hold on
-title('Field Plot displaying Airfoil, Streamlines, Streamlines [nSources = 99]')
+title('Field Plot displaying Airfoil, Sources, Streamlines [nSources = 99]')
 xlabel('X')
 ylabel('Y')
 axis([xMin xMax yMin yMax])
