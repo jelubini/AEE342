@@ -59,7 +59,7 @@ xy = zeros(N, 2);
 %Run Loop
 figure(1)
 hold on
-title('Field Plot displaying Airfoil, Streamlines, Streamlines [nSources = 19]')
+title('Field Plot displaying Airfoil, Streamlines, Streamlines [nSources = 99]')
 xlabel('X')
 ylabel('Y')
 axis([xMin xMax yMin yMax])
@@ -113,7 +113,7 @@ end
 %Source-Sink Distribution
 figure(2)
 hold on
-title('Source Position vs Strength [nSources = 19]')
+title('Source Position vs Strength [nSources = 99]')
 xlabel('Position (x/c)')
 ylabel('Source Strength')
 plot(xSink, s, '-*')
@@ -122,7 +122,7 @@ plot(xSink, s, '-*')
 figure(3)
 hold on
 axis([0 1 -1 1])
-title('Pressure Coefficient Distribution [nSources = 19]')
+title('Pressure Coefficient Distribution [nSources = 99]')
 xlabel('Position (x/c)')
 ylabel('Cp')
 plot(ratioPositionChord, coefficientPressureExp, 'o', 'color', [1 0 0])

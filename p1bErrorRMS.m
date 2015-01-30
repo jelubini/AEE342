@@ -4,7 +4,6 @@
 %01/30/15
 
 function errorRMS = p1bErrorRMS(nSinks)
-nSinks = 99;
 ratioPositionChord = [0 0.005 0.0125 0.025 0.050 0.075 0.10 0.20 0.25 0.30 : 0.1 : 0.90 0.95 1.00]';
 coefficientPressureExp = [1.000 0.454 0.067 -0.237 -0.450 -0.498 -0.520 -0.510 -0.484 -0.450 -0.369 -0.279 -0.206 -0.132 -0.049 0.055 0.128 1.000]';
 t = 0.15;
@@ -52,6 +51,6 @@ coefficientPressureSim = 1 - (qAirfoil .^ 2) ./ (velocityFreestream .^ 2);
 %Root Mean Square Error
 sumDiffSq = 0;
 for n = [1 : indexEndAirfoil - 1]
-    sumDiffSq = sumDiffSq + (coefficientPressureSim(n)  - interp1(ratioPositionChord, coefficientPressureExp, xyAirfoil(n, 1))) .^ 2;
+    sumDiffSq = sumDiffSq + (coefficientPressureSim(n)  - interp1(ratioPositionChord, coefficientPressureExp, abs(xyAirfoil(n, 1)))) .^ 2;
 end
 errorRMS = sqrt(sumDiffSq ./ (indexEndAirfoil - 1));
