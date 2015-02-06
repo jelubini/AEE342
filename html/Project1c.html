@@ -1,0 +1,341 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Project1c</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-02-06"><meta name="DC.source" content="Project1c.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Known</a></li><li><a href="#3">Calculations</a></li><li><a href="#4">Plots</a></li></ul></div><pre class="codeinput"><span class="comment">%Joel Lubinitsky</span>
+<span class="comment">%AEE 342 - Project 1c: Analysis of Symmetric Airfoils</span>
+<span class="comment">%02/06/15</span>
+
+clear <span class="string">all</span>
+close <span class="string">all</span>
+clc
+</pre><h2>Known<a name="2"></a></h2><pre class="codeinput"><span class="comment">%Domain</span>
+xMin = -1;
+xMax = 2;
+
+yMin = -1;
+yMax = 1;
+
+<span class="comment">%NACA0015</span>
+t = 0.15;
+
+<span class="comment">%Pressure Coefficients (NACA0015)</span>
+ratioPositionChord = [0 0.005 0.0125 0.025 0.050 0.075 0.10 0.20 0.25 0.30 : 0.1 : 0.90 0.95 1.00]';
+coefficientPressureExp = [1.000 0.454 0.067 -0.237 -0.450 -0.498 -0.520 -0.510 -0.484 -0.450 -0.369 -0.279 -0.206 -0.132 -0.049 0.055 0.128 1.000]';
+</pre><h2>Calculations<a name="3"></a></h2><pre class="codeinput">nSinks = 99;
+
+xSink = zeros(1, nSinks);
+<span class="keyword">for</span> i = [1 : length(xSink)]
+    xSink(i) = i / (nSinks + 1);
+<span class="keyword">end</span>
+
+yAirfoil = (t ./ 0.20) .* (0.2969 .* sqrt(xSink) - 0.1260 .* xSink - 0.3516 .* xSink .^ 2 + 0.2843 .* xSink .^ 3 - 0.1015 .* xSink .^ 4);
+dydxAirfoil = (t ./ 0.20) .* ((0.14845 .* xSink .^ -0.5) - (0.1260) - (0.7032 .* xSink) + (0.8529 .* xSink .^ 2) - (0.4060 .* xSink .^ 3));
+
+M = zeros(nSinks, nSinks);
+<span class="keyword">for</span> j = [1 : nSinks]
+    <span class="keyword">for</span> i = [1 : nSinks]
+        M(j, i) = (yAirfoil(j) / ((xSink(j) - xSink(i)) ^ 2 + yAirfoil(j) ^ 2)) - (((xSink(j) - xSink(i)) / ((xSink(j) - xSink(i)) ^ 2 + yAirfoil(j) ^ 2)) * ((t / 0.20) * ((0.14845 * xSink(j) ^ -0.5) - (0.1260) - (0.7032 * xSink(j)) + (0.8529 * xSink(j) ^ 2) - (0.4060 * xSink(j) ^ 3))));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+R = dydxAirfoil';
+s = M\R;
+
+[x, y] = meshgrid(linspace(xMin, xMax, 30), linspace(yMin, yMax, 20));
+
+u = 1;
+v = 0;
+<span class="keyword">for</span> i = [1 : nSinks]
+    u = u + s(i) .* (x - xSink(i)) ./ ((x - xSink(i)) .^ 2 + y .^ 2);
+    v = v + s(i) .* y ./ ((x - xSink(i)) .^ 2 + y .^ 2);
+<span class="keyword">end</span>
+
+<span class="comment">%Initialize Loop</span>
+T = 10;
+dt = 0.01;
+N = (T / dt) + 1;
+xy = zeros(N, 2);
+
+<span class="comment">%Run Loop</span>
+figure(1)
+hold <span class="string">on</span>
+title(<span class="string">'Field Plot displaying Airfoil, Sources, Streamlines [nSources = 99]'</span>)
+xlabel(<span class="string">'X'</span>)
+ylabel(<span class="string">'Y'</span>)
+axis([xMin xMax yMin yMax])
+
+<span class="keyword">for</span> i = [1 : 20]
+    xy(1, :) = [x(1), y(i)];
+    <span class="keyword">for</span> n = [1 : N - 1]
+        xy(n + 1, :) = p1bEuler(xy(n, :), s, xSink, dt);
+    <span class="keyword">end</span>
+    plot(xy(:, 1), xy(:, 2))
+<span class="keyword">end</span>
+
+plot(xSink, yAirfoil, <span class="string">'*'</span>, <span class="string">'color'</span>, [1 0 0])
+plot(xSink, -yAirfoil, <span class="string">'*'</span>, <span class="string">'color'</span>, [1 0 0])
+plot(xSink, 0, <span class="string">'o'</span>, <span class="string">'color'</span>, [0 1 0])
+
+<span class="comment">%Airfoil Streamlines</span>
+xyAirfoil = zeros(N, 2);
+<span class="keyword">for</span> i = [-yAirfoil(1), yAirfoil(1)]
+    xyAirfoil(1, :) = [xSink(1), i];
+
+    <span class="keyword">for</span> n = [1 : N - 1]
+       xyAirfoil(n + 1, :) = p1bEuler(xyAirfoil(n, :), s, xSink, dt);
+    <span class="keyword">end</span>
+
+    plot(xyAirfoil(:, 1), xyAirfoil(:, 2), <span class="string">'color'</span>, [1 0 1])
+<span class="keyword">end</span>
+
+<span class="comment">%Pressure Coefficients</span>
+velocityFreestream = sqrt(mean(u(:, 1)) .^ 2 + mean(v(:, 1)) .^ 2);
+[minEndAirfoil, indexEndAirfoil] = min(abs(xyAirfoil(:, 1) - 1));
+
+uAirfoil = 1;
+vAirfoil = 0;
+<span class="keyword">for</span> i = [1 : nSinks]
+    uAirfoil = uAirfoil + s(i) .* (xyAirfoil(:, 1) - xSink(i)) ./ ((xyAirfoil(:, 1)- xSink(i)) .^ 2 + xyAirfoil(:, 2).^ 2);
+    vAirfoil = vAirfoil + s(i) .* xyAirfoil(:, 2)./ ((xyAirfoil(:, 1) - xSink(i)) .^ 2 + xyAirfoil(:, 2).^ 2);
+<span class="keyword">end</span>
+
+qAirfoil = sqrt(uAirfoil .^ 2 + vAirfoil .^ 2);
+coefficientPressureSim = 1 - (qAirfoil .^ 2) ./ (velocityFreestream .^ 2);
+
+<span class="comment">%Root Mean Square Error</span>
+nSinkValues = [3 5 9 19 29 49 99];
+errorRMS = zeros(length(nSinkValues), 1);
+<span class="keyword">for</span> n = [1 : length(nSinkValues)]
+    errorRMS(n) = p1bErrorRMS(nSinkValues(n));
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="Project1c_01.png" alt=""> <h2>Plots<a name="4"></a></h2><pre class="codeinput"><span class="comment">%Source-Sink Distribution</span>
+figure(2)
+hold <span class="string">on</span>
+title(<span class="string">'Source Position vs Strength [nSources = 99]'</span>)
+xlabel(<span class="string">'Position (x/c)'</span>)
+ylabel(<span class="string">'Source Strength'</span>)
+plot(xSink, s, <span class="string">'-*'</span>)
+
+<span class="comment">%Pressure Coefficients</span>
+figure(3)
+hold <span class="string">on</span>
+axis([0 1 -1 1])
+title(<span class="string">'Pressure Coefficient Distribution [nSources = 99]'</span>)
+xlabel(<span class="string">'Position (x/c)'</span>)
+ylabel(<span class="string">'Cp'</span>)
+plot(ratioPositionChord, coefficientPressureExp, <span class="string">'o'</span>, <span class="string">'color'</span>, [1 0 0])
+plot(xyAirfoil(:, 1), coefficientPressureSim)
+
+<span class="comment">%RMS Error</span>
+figure(4)
+hold <span class="string">on</span>
+title(<span class="string">'Root Mean Square Error Convergence'</span>)
+xlabel(<span class="string">'Number of Sources'</span>)
+ylabel(<span class="string">'Error Cp'</span>)
+loglog(nSinkValues, errorRMS, <span class="string">'-o'</span>)
+</pre><img vspace="5" hspace="5" src="Project1c_02.png" alt=""> <img vspace="5" hspace="5" src="Project1c_03.png" alt=""> <img vspace="5" hspace="5" src="Project1c_04.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%Joel Lubinitsky
+%AEE 342 - Project 1c: Analysis of Symmetric Airfoils
+%02/06/15
+
+clear all
+close all
+clc
+
+%% Known
+%Domain
+xMin = -1;
+xMax = 2;
+
+yMin = -1;
+yMax = 1;
+
+%NACA0015
+t = 0.15;
+
+%Pressure Coefficients (NACA0015)
+ratioPositionChord = [0 0.005 0.0125 0.025 0.050 0.075 0.10 0.20 0.25 0.30 : 0.1 : 0.90 0.95 1.00]';
+coefficientPressureExp = [1.000 0.454 0.067 -0.237 -0.450 -0.498 -0.520 -0.510 -0.484 -0.450 -0.369 -0.279 -0.206 -0.132 -0.049 0.055 0.128 1.000]';
+
+%% Calculations
+nSinks = 99;
+
+xSink = zeros(1, nSinks);
+for i = [1 : length(xSink)]
+    xSink(i) = i / (nSinks + 1);
+end
+
+yAirfoil = (t ./ 0.20) .* (0.2969 .* sqrt(xSink) - 0.1260 .* xSink - 0.3516 .* xSink .^ 2 + 0.2843 .* xSink .^ 3 - 0.1015 .* xSink .^ 4);
+dydxAirfoil = (t ./ 0.20) .* ((0.14845 .* xSink .^ -0.5) - (0.1260) - (0.7032 .* xSink) + (0.8529 .* xSink .^ 2) - (0.4060 .* xSink .^ 3));
+
+M = zeros(nSinks, nSinks);
+for j = [1 : nSinks]
+    for i = [1 : nSinks]
+        M(j, i) = (yAirfoil(j) / ((xSink(j) - xSink(i)) ^ 2 + yAirfoil(j) ^ 2)) - (((xSink(j) - xSink(i)) / ((xSink(j) - xSink(i)) ^ 2 + yAirfoil(j) ^ 2)) * ((t / 0.20) * ((0.14845 * xSink(j) ^ -0.5) - (0.1260) - (0.7032 * xSink(j)) + (0.8529 * xSink(j) ^ 2) - (0.4060 * xSink(j) ^ 3))));
+    end
+end
+
+R = dydxAirfoil';
+s = M\R;
+
+[x, y] = meshgrid(linspace(xMin, xMax, 30), linspace(yMin, yMax, 20));
+
+u = 1;
+v = 0;
+for i = [1 : nSinks]
+    u = u + s(i) .* (x - xSink(i)) ./ ((x - xSink(i)) .^ 2 + y .^ 2);
+    v = v + s(i) .* y ./ ((x - xSink(i)) .^ 2 + y .^ 2);
+end
+
+%Initialize Loop
+T = 10;
+dt = 0.01;
+N = (T / dt) + 1;
+xy = zeros(N, 2);
+
+%Run Loop
+figure(1)
+hold on
+title('Field Plot displaying Airfoil, Sources, Streamlines [nSources = 99]')
+xlabel('X')
+ylabel('Y')
+axis([xMin xMax yMin yMax])
+
+for i = [1 : 20]
+    xy(1, :) = [x(1), y(i)];
+    for n = [1 : N - 1]
+        xy(n + 1, :) = p1bEuler(xy(n, :), s, xSink, dt);
+    end
+    plot(xy(:, 1), xy(:, 2))
+end
+
+plot(xSink, yAirfoil, '*', 'color', [1 0 0])
+plot(xSink, -yAirfoil, '*', 'color', [1 0 0])
+plot(xSink, 0, 'o', 'color', [0 1 0])
+
+%Airfoil Streamlines
+xyAirfoil = zeros(N, 2);
+for i = [-yAirfoil(1), yAirfoil(1)]
+    xyAirfoil(1, :) = [xSink(1), i];
+    
+    for n = [1 : N - 1]
+       xyAirfoil(n + 1, :) = p1bEuler(xyAirfoil(n, :), s, xSink, dt);
+    end
+    
+    plot(xyAirfoil(:, 1), xyAirfoil(:, 2), 'color', [1 0 1])
+end
+
+%Pressure Coefficients
+velocityFreestream = sqrt(mean(u(:, 1)) .^ 2 + mean(v(:, 1)) .^ 2);
+[minEndAirfoil, indexEndAirfoil] = min(abs(xyAirfoil(:, 1) - 1));
+
+uAirfoil = 1;
+vAirfoil = 0;
+for i = [1 : nSinks]
+    uAirfoil = uAirfoil + s(i) .* (xyAirfoil(:, 1) - xSink(i)) ./ ((xyAirfoil(:, 1)- xSink(i)) .^ 2 + xyAirfoil(:, 2).^ 2);
+    vAirfoil = vAirfoil + s(i) .* xyAirfoil(:, 2)./ ((xyAirfoil(:, 1) - xSink(i)) .^ 2 + xyAirfoil(:, 2).^ 2);
+end
+
+qAirfoil = sqrt(uAirfoil .^ 2 + vAirfoil .^ 2);
+coefficientPressureSim = 1 - (qAirfoil .^ 2) ./ (velocityFreestream .^ 2);
+
+%Root Mean Square Error
+nSinkValues = [3 5 9 19 29 49 99];
+errorRMS = zeros(length(nSinkValues), 1);
+for n = [1 : length(nSinkValues)]
+    errorRMS(n) = p1bErrorRMS(nSinkValues(n));
+end
+
+%% Plots
+%Source-Sink Distribution
+figure(2)
+hold on
+title('Source Position vs Strength [nSources = 99]')
+xlabel('Position (x/c)')
+ylabel('Source Strength')
+plot(xSink, s, '-*')
+
+%Pressure Coefficients
+figure(3)
+hold on
+axis([0 1 -1 1])
+title('Pressure Coefficient Distribution [nSources = 99]')
+xlabel('Position (x/c)')
+ylabel('Cp')
+plot(ratioPositionChord, coefficientPressureExp, 'o', 'color', [1 0 0])
+plot(xyAirfoil(:, 1), coefficientPressureSim)
+
+%RMS Error
+figure(4)
+hold on
+title('Root Mean Square Error Convergence')
+xlabel('Number of Sources')
+ylabel('Error Cp')
+loglog(nSinkValues, errorRMS, '-o')
+##### SOURCE END #####
+--></body></html>
