@@ -79,8 +79,8 @@ plot(xSink, 0, 'o', 'color', [0 1 0])
 
 %Airfoil Streamlines
 xyAirfoil = zeros(N, 2);
-for i = [-0.001, 0.001]
-    xyAirfoil(1, :) = [0, i];
+for i = [-yAirfoil(1), yAirfoil(1)]
+    xyAirfoil(1, :) = [xSink(1), i];
     
     for n = [1 : N - 1]
        xyAirfoil(n + 1, :) = p1bEuler(xyAirfoil(n, :), s, xSink, dt);
