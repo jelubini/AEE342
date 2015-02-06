@@ -30,17 +30,16 @@ for i = [1 : length(xSink)]
 end
 
 yAirfoil = (t ./ 0.20) .* (0.2969 .* sqrt(xSink) - 0.1260 .* xSink - 0.3516 .* xSink .^ 2 + 0.2843 .* xSink .^ 3 - 0.1015 .* xSink .^ 4);
-dydxAirfoil = (t / 0.20) * ((-0.14845 * xSink ^ -1.5) - (0.1260) - (0.7032 * xSink) + (0.8529 * xSink ^ 2) - (0.4060 * xSink ^ 3));
-
+dydxAirfoil = (t ./ 0.20) .* ((0.14845 .* xSink .^ -0.5) - (0.1260) - (0.7032 .* xSink) + (0.8529 .* xSink .^ 2) - (0.4060 .* xSink .^ 3));
 
 M = zeros(nSinks, nSinks);
 for j = [1 : nSinks]
     for i = [1 : nSinks]
-        M(j, i) = (yAirfoil(j) / ((xSink(j) - xSink(i)) ^ 2 + yAirfoil ^ 2)) - (((xSink(j) - xSink(i)) / ((xSink(j) - xSink(i)) ^ 2 + y ^ 2)) * ((t / 0.20) * ((-0.14845 * xSink(j) ^ -1.5) - (0.1260) - (0.7032 * xSink(j)) + (0.8529 * xSink(j) ^ 2) - (0.4060 * xSink(j) ^ 3))));
+        M(j, i) = (yAirfoil(j) / ((xSink(j) - xSink(i)) ^ 2 + yAirfoil(j) ^ 2)) - (((xSink(j) - xSink(i)) / ((xSink(j) - xSink(i)) ^ 2 + yAirfoil(j) ^ 2)) * ((t / 0.20) * ((0.14845 * xSink(j) ^ -0.5) - (0.1260) - (0.7032 * xSink(j)) + (0.8529 * xSink(j) ^ 2) - (0.4060 * xSink(j) ^ 3))));
     end
 end
 
-R = dydxAirfoil;
+R = dydxAirfoil';
 s = M\R;
 
 [x, y] = meshgrid(linspace(xMin, xMax, 30), linspace(yMin, yMax, 20));
@@ -80,8 +79,8 @@ plot(xSink, 0, 'o', 'color', [0 1 0])
 
 %Airfoil Streamlines
 xyAirfoil = zeros(N, 2);
-for i = [-0.001, 0.001]
-    xyAirfoil(1, :) = [0, i];
+for i = [-yAirfoil(1), yAirfoil(1)]
+    xyAirfoil(1, :) = [xSink(1), i];
     
     for n = [1 : N - 1]
        xyAirfoil(n + 1, :) = p1bEuler(xyAirfoil(n, :), s, xSink, dt);
@@ -127,7 +126,7 @@ axis([0 1 -1 1])
 title('Pressure Coefficient Distribution [nSources = 99]')
 xlabel('Position (x/c)')
 ylabel('Cp')
-plot(ratioPositionChord, coefficientPressureExp, 'o', 'color', [1 0 0])
+print(plot(ratioPositionChord, coefficientPressureExp, 'o', 'color', [1 0 0])
 plot(xyAirfoil(:, 1), coefficientPressureSim)
 
 %RMS Error
