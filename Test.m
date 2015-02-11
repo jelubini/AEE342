@@ -1,0 +1,9 @@
+clear all
+close all
+clc
+
+uInfinity = 1;
+lambda = 1;
+a = 1;
+
+x = (((a^4*lambda^2)/(64*pi^2*uInfinity^2) - (4*pi*uInfinity*a^2 + 3*lambda*a)^3/(1728*pi^3*uInfinity^3))^(1/2) - (a^2*lambda)/(8*pi*uInfinity))^(1/3) + (4*pi*uInfinity*a^2 + 3*lambda*a)/(12*pi*uInfinity*((- (3*a*lambda + 4*pi*a^2*uInfinity)^3/(1728*pi^3*uInfinity^3) + (a^4*lambda^2)/(64*pi^2*uInfinity^2))^(1/2) - (a^2*lambda)/(8*pi*uInfinity))^(1/3)) - (((a^4*lambda^2)/(64*pi^2*uInfinity^2) - (4*pi*uInfinity*a^2 + 3*lambda*a)^3/(1728*pi^3*uInfinity^3))^(1/2) - (a^2*lambda)/(8*pi*uInfinity))^(1/3)/2 + (3^(1/2)*((((a^4*lambda^2)/(64*pi^2*uInfinity^2) - (4*pi*uInfinity*a^2 + 3*lambda*a)^3/(1728*pi^3*uInfinity^3))^(1/2) - (a^2*lambda)/(8*pi*uInfinity))^(1/3) - (4*pi*uInfinity*a^2 + 3*lambda*a)/(12*pi*uInfinity*((- (3*a*lambda + 4*pi*a^2*uInfinity)^3/(1728*pi^3*uInfinity^3) + (a^4*lambda^2)/(64*pi^2*uInfinity^2))^(1/2) - (a^2*lambda)/(8*pi*uInfinity))^(1/3)))*i)/2 - (4*pi*uInfinity*a^2 + 3*lambda*a)/(24*pi*uInfinity*((- (3*a*lambda + 4*pi*a^2*uInfinity)^3/(1728*pi^3*uInfinity^3) + (a^4*lambda^2)/(64*pi^2*uInfinity^2))^(1/2) - (a^2*lambda)/(8*pi*uInfinity))^(1/3)) - (((a^4*lambda^2)/(64*pi^2*uInfinity^2) - (4*pi*uInfinity*a^2 + 3*lambda*a)^3/(1728*pi^3*uInfinity^3))^(1/2) - (a^2*lambda)/(8*pi*uInfinity))^(1/3)/2 - (3^(1/2)*((((a^4*lambda^2)/(64*pi^2*uInfinity^2) - (4*pi*uInfinity*a^2 + 3*lambda*a)^3/(1728*pi^3*uInfinity^3))^(1/2) - (a^2*lambda)/(8*pi*uInfinity))^(1/3) - (4*pi*uInfinity*a^2 + 3*lambda*a)/(12*pi*uInfinity*((- (3*a*lambda + 4*pi*a^2*uInfinity)^3/(1728*pi^3*uInfinity^3) + (a^4*lambda^2)/(64*pi^2*uInfinity^2))^(1/2) - (a^2*lambda)/(8*pi*uInfinity))^(1/3)))*i)/2 - (4*pi*uInfinity*a^2 + 3*lambda*a)/(24*pi*uInfinity*((- (3*a*lambda + 4*pi*a^2*uInfinity)^3/(1728*pi^3*uInfinity^3) + (a^4*lambda^2)/(64*pi^2*uInfinity^2))^(1/2) - (a^2*lambda)/(8*pi*uInfinity))^(1/3))
