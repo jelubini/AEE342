@@ -29,7 +29,7 @@ function Project2jfd(alpha, n_pan, m, p, tt)
     xCamber = 0.5 * (1 + cos(zeta));
     yThickness = (tt / 0.20) * ((0.2969 * sqrt(xCamber)) - (0.1260 .* xCamber) - (0.3516 .* xCamber .^ 2) + (0.2843 .* xCamber .^ 3) - (0.1015 .* xCamber .^ 4));
 
-    if p > 0 & m > 0
+    if p > 0 && m > 0
     indexP = max(find(xCamber < p));
 
     xCamber1 = xCamber(1 : indexP);
@@ -44,23 +44,27 @@ function Project2jfd(alpha, n_pan, m, p, tt)
     theta = atan(dydxCamber);
 
     xUpper = xCamber - yThickness .* sin(theta);
+    xUpper = xUpper(1 : 1 : end - 1);
     xLower = xCamber + yThickness .* sin(theta);
+    xLower = xLower(end : -1 : 2);
 
     yUpper = yCamber + yThickness .* cos(theta);
+    yUpper = yUpper(1 : 1 : end - 1);
     yLower = yCamber - yThickness .* cos(theta);
+    yLower = yLower(end : -1 : 2);
 
-    X = [xUpper(1 : 1 : end - 1), xLower(end : -1 : 2)];
-    Y = [yUpper(1 : 1 : end - 1), yLower(end : -1 : 2)];
+    X = [xUpper, xLower];
+    Y = [yUpper, yLower];
     
-    elseif p == 0 & m == 0
+    elseif p == 0 && m == 0
         xUpper = xCamber;
         xLower = xCamber;
         
         yUpper = yThickness;
         yLower = -yThickness;
         
-        X = [xUpper, xLower(end - 1 : -1 : 2)];
-        Y = [yUpper, yLower(end - 1 : -1 : 2)];
+        X = [xUpper(1 : 1 : end - 1), xLower(end : -1 : 2)];
+        Y = [yUpper(1 : 1 : end - 1), yLower(end : -1 : 2)];
         
         else
             error('Go back to the 90s, fag-gaaaaat!')
@@ -83,24 +87,26 @@ function Project2jfd(alpha, n_pan, m, p, tt)
     [xcp, ycp, Cp, lambda] = sourcePanel(Uinf, Vinf, X, Y);
     
     % integrate pressure coefficient for force coefficients
-    CpUpper = Cp(1 : round(n_pan / 2));
-    CpLower = [Cp(round(n_pan / 2) : end), Cp(1)];
+    CpUpper = Cp(1 : round(n_pan / 2) - 1);
+    CpLower = Cp(round(n_pan / 2) : end);
     CpLower = CpLower(end : -1 : 1);
     
-    xCpUpper = xcp(1 : round(n_pan / 2));
-    xCpLower = [xcp(round(n_pan / 2) : end), xcp(1)];
+    xCpUpper = xcp(1 : round(n_pan / 2) - 1);
+    xCpLower = xcp(round(n_pan / 2) : end);
     xCpLower = xCpLower(end : -1 : 1);
     
-    Cn = Project2aCn(n_pan, xCpUpper, xCpLower, CpUpper, CpLower)
-    Ca = Project2aCa(n_pan, xCpUpper, xCpLower, CpUpper, CpLower)
+    Cn = Project2aCn(n_pan, xCpUpper, xCpLower, CpUpper, CpLower);
+    Ca = Project2aCa(n_pan, xCpUpper, xCpLower, CpUpper, CpLower, yUpper, yLower);
     
+    Cl = Cn * cos(alpha) - Ca * sin(alpha);
+    Cd = Cn * sin(alpha) + Ca * cos(alpha);
 
     % plot the source panel strengths (figure 2, subplot 1)
     figure(2)
     subplot(2,2,1)
         plot(1:length(lambda), lambda, '-o')
     
-        title('AEE342 - Project2jfd')
+        title('AEE342 - Project2a, \alpha = 0^\circ')
         xlabel('Panel number')
         ylabel('Source panel strength (lambda)')
         axis([0 140 -20 20])
@@ -110,7 +116,7 @@ function Project2jfd(alpha, n_pan, m, p, tt)
     subplot(2,2,2)
         plot([xcp, xcp(1)], -[Cp, Cp(1)])
     
-        title('Source panel method')
+        title(strcat('C_n =', num2str(Cn)))
         xlabel('x (control points)')
         ylabel('-Cp')
         xlim([-0.5 1.5])
@@ -120,6 +126,7 @@ function Project2jfd(alpha, n_pan, m, p, tt)
     subplot(2,2,3)
         plot(-[Cp, Cp(1)], [ycp, ycp(1)])
     
+        title(strcat('C_a =', num2str(Ca)))
         xlabel('-Cp')
         ylabel('y (control points)')
         ylim([-0.8 0.8])
@@ -149,6 +156,7 @@ function Project2jfd(alpha, n_pan, m, p, tt)
         end % for i_sl
         hold off
     
+        title(strcat('C_l =', num2str(Cl), ' C_d =', num2str(Cd)))
         xlabel('x')
         ylabel('y')
         axis([-0.5 1.5 -0.8 0.8])

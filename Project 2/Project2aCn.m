@@ -8,7 +8,7 @@ function area = Project2aCn(n_pan, xCpUpper, xCpLower, CpUpper, CpLower)
     areaUpper = 0;
     areaLower = 0;
     
-    for n = [1 : (n_pan / 2) - 1]
+    for n = [1 : (n_pan / 2) - 2]
         
         dxUpper   = xCpUpper(n + 1) - xCpUpper(n);
         rectUpper = CpUpper(n) * dxUpper;
