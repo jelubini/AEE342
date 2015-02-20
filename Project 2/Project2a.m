@@ -1,7 +1,8 @@
-function Project2jfd(alpha, n_pan, m, p, tt)
+function Project2a(alpha, n_pan, m, p, tt)
     % Project2jfd - 2D potential flow via source panel method
     %    written by John Dannenhoffer for AEE342 (Spring 2015)
     %    adapted from Anderson's "Fundamentals of Aerodynamics, 5th ed"
+    %    edited by Joel Lubinitsky for airfoil
     %
     % alpha  = angle of attack        (deg)
     % series = NACA series designator (mptt)
@@ -14,17 +15,13 @@ function Project2jfd(alpha, n_pan, m, p, tt)
     ymin  = -3.0;                % minimum Y in domain
     ymax  = +3.0;                % maximum Y in domain
 
-    % set up an array that contains the points that define the
-    %    configuration
-
-    % the following 8 lines implement the circle shown
-    %    in Figure 3.41 of Anderson
-
+    % format inputs
     n_pan = n_pan + 2;
     m = m * 0.01;
     p = p * 0.1;
     tt = tt * 0.01;
 
+    % define airfoil geometry
     zeta = linspace(pi, 2 * pi, n_pan / 2);
     xCamber = 0.5 * (1 + cos(zeta));
     yThickness = (tt / 0.20) * ((0.2969 * sqrt(xCamber)) - (0.1260 .* xCamber) - (0.3516 .* xCamber .^ 2) + (0.2843 .* xCamber .^ 3) - (0.1015 .* xCamber .^ 4));
@@ -66,14 +63,12 @@ function Project2jfd(alpha, n_pan, m, p, tt)
         X = [xUpper(1 : 1 : end - 1), xLower(end : -1 : 2)];
         Y = [yUpper(1 : 1 : end - 1), yLower(end : -1 : 2)];
         
-        else
-            error('Go back to the 90s, fag-gaaaaat!')
     end
 
     % plot the configuration with first point repeated (figure 1)
     figure(1)
     plot([X, X(1)], [Y, Y(1)], '-*')
-    title('Original configuration')
+    title(strcat('Original configuration - NACA ', num2str(m * 100), num2str(p * 10), num2str(tt * 100)))
     xlabel('x')
     ylabel('y')
     axis equal
@@ -106,7 +101,7 @@ function Project2jfd(alpha, n_pan, m, p, tt)
     subplot(2,2,1)
         plot(1:length(lambda), lambda, '-o')
     
-        title('AEE342 - Project2a, \alpha = 0^\circ')
+        title(strcat('AEE342 - Project2a, \alpha = ', num2str(alpha), '^\circ'))
         xlabel('Panel number')
         ylabel('Source panel strength (lambda)')
         axis([0 140 -20 20])
