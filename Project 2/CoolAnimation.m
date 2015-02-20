@@ -1,4 +1,4 @@
-function Project2jfd(alpha, n_pan, m, p, tt)
+function CoolAnimation(n_pan, m, p, tt)
     % Project2jfd - 2D potential flow via source panel method
     %    written by John Dannenhoffer for AEE342 (Spring 2015)
     %    adapted from Anderson's "Fundamentals of Aerodynamics, 5th ed"
@@ -20,7 +20,6 @@ function Project2jfd(alpha, n_pan, m, p, tt)
     % the following 8 lines implement the circle shown
     %    in Figure 3.41 of Anderson
 
-    n_pan = n_pan + 2;
     m = m * 0.01;
     p = p * 0.1;
     tt = tt * 0.01;
@@ -49,8 +48,8 @@ function Project2jfd(alpha, n_pan, m, p, tt)
     yUpper = yCamber + yThickness .* cos(theta);
     yLower = yCamber - yThickness .* cos(theta);
 
-    X = [xUpper(1 : 1 : end - 1), xLower(end : -1 : 2)];
-    Y = [yUpper(1 : 1 : end - 1), yLower(end : -1 : 2)];
+    X = [xUpper, xLower(end - 1 : -1 : 2)];
+    Y = [yUpper, yLower(end - 1 : -1 : 2)];
     
     elseif p == 0 & m == 0
         xUpper = xCamber;
@@ -66,15 +65,7 @@ function Project2jfd(alpha, n_pan, m, p, tt)
             error('Go back to the 90s, fag-gaaaaat!')
     end
 
-    % plot the configuration with first point repeated (figure 1)
-    figure(1)
-    plot([X, X(1)], [Y, Y(1)], '-*')
-    title('Original configuration')
-    xlabel('x')
-    ylabel('y')
-    axis equal
-    grid on
-
+    for alpha = [-5 : 30]
     % define the freestream velocities in the x- and y- directions
     Uinf  = cos(alpha * pi/180);
     Vinf  = sin(alpha * pi/180);
@@ -84,50 +75,16 @@ function Project2jfd(alpha, n_pan, m, p, tt)
     
     % integrate pressure coefficient for force coefficients
     CpUpper = Cp(1 : round(n_pan / 2));
-    CpLower = [Cp(round(n_pan / 2) : end), Cp(1)];
-    CpLower = CpLower(end : -1 : 1);
+    CpLower = Cp(round(n_pan / 2) : end);
     
-    xCpUpper = xcp(1 : round(n_pan / 2));
-    xCpLower = [xcp(round(n_pan / 2) : end), xcp(1)];
-    xCpLower = xCpLower(end : -1 : 1);
-    
-    Cn = Project2aCn(n_pan, xCpUpper, xCpLower, CpUpper, CpLower)
-    Ca = Project2aCa(n_pan, xCpUpper, xCpLower, CpUpper, CpLower)
+    %Cn = CpLower - CpUpper;
     
 
     % plot the source panel strengths (figure 2, subplot 1)
-    figure(2)
-    subplot(2,2,1)
-        plot(1:length(lambda), lambda, '-o')
-    
-        title('AEE342 - Project2jfd')
-        xlabel('Panel number')
-        ylabel('Source panel strength (lambda)')
-        axis([0 140 -20 20])
-        grid on
-    
-    % plots the surface Cp distribution (figure 2, subplots 2 and 3)
-    subplot(2,2,2)
-        plot([xcp, xcp(1)], -[Cp, Cp(1)])
-    
-        title('Source panel method')
-        xlabel('x (control points)')
-        ylabel('-Cp')
-        xlim([-0.5 1.5])
-        ylim([-1 4])
-        grid on
-    
-    subplot(2,2,3)
-        plot(-[Cp, Cp(1)], [ycp, ycp(1)])
-    
-        xlabel('-Cp')
-        ylabel('y (control points)')
-        ylim([-0.8 0.8])
-        xlim([-1 4])
-        grid on
+    figure(1)
+
 
     % plot of configuration and streamlines (figure 2, subplot 4)
-    subplot(2,2,4)
         plot([X, X(1)], [Y, Y(1)], '-*b')
     
         hold on
@@ -152,6 +109,8 @@ function Project2jfd(alpha, n_pan, m, p, tt)
         xlabel('x')
         ylabel('y')
         axis([-0.5 1.5 -0.8 0.8])
+        
+    end
     
 end % function Project2jfd
 

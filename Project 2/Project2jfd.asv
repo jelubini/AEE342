@@ -20,6 +20,7 @@ function Project2jfd(alpha, n_pan, m, p, tt)
     % the following 8 lines implement the circle shown
     %    in Figure 3.41 of Anderson
 
+    n_pan = n_pan + 2;
     m = m * 0.01;
     p = p * 0.1;
     tt = tt * 0.01;
@@ -28,7 +29,7 @@ function Project2jfd(alpha, n_pan, m, p, tt)
     xCamber = 0.5 * (1 + cos(zeta));
     yThickness = (tt / 0.20) * ((0.2969 * sqrt(xCamber)) - (0.1260 .* xCamber) - (0.3516 .* xCamber .^ 2) + (0.2843 .* xCamber .^ 3) - (0.1015 .* xCamber .^ 4));
 
-    if p > 0
+    if p > 0 & m > 0
     indexP = max(find(xCamber < p));
 
     xCamber1 = xCamber(1 : indexP);
@@ -48,15 +49,21 @@ function Project2jfd(alpha, n_pan, m, p, tt)
     yUpper = yCamber + yThickness .* cos(theta);
     yLower = yCamber - yThickness .* cos(theta);
 
-    X = [xUpper, xLower(end : -1 : 2)];
-    Y = [yUpper, yLower(end : -1 : 2)];
+    X = [xUpper(1 : 1 : end - 1), xLower(end : -1 : 2)];
+    Y = [yUpper(1 : 1 : end - 1), yLower(end : -1 : 2)];
     
-    else
+    elseif p == 0 & m == 0
         xUpper = xCamber;
         xLower = xCamber;
-        yLower = 
-        X = [xCamber, xCamber(end - 1 : -1 : 2)];
-        Y = [yThickness, -yThickness(end - 1 : -1 : 2)];
+        
+        yUpper = yThickness;
+        yLower = -yThickness;
+        
+        X = [xUpper, xLower(end - 1 : -1 : 2)];
+        Y = [yUpper, yLower(end - 1 : -1 : 2)];
+        
+        else
+            error('Go back to the 90s, fag-gaaaaat!')
     end
 
     % plot the configuration with first point repeated (figure 1)
@@ -77,7 +84,8 @@ function Project2jfd(alpha, n_pan, m, p, tt)
     
     % integrate pressure coefficient for force coefficients
     CpUpper = Cp(1 : round(n_pan / 2));
-    CpLower = Cp(round(n_pan / 2) + 1 : end);
+    CpLower = [Cp(round(n_pan / 2) : end), Cp(1)];
+    CpLower = CpLower(
     
     Cn = CpLower - CpUpper;
     
