@@ -1,0 +1,205 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>HW6</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-02-25"><meta name="DC.source" content="HW6.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Governing Equations</a></li><li><a href="#3">Definitions/Conversions</a></li><li><a href="#4">Calculations</a></li><li><a href="#5">Plot</a></li><li><a href="#6">Results</a></li></ul></div><pre class="codeinput"><span class="comment">% Joel Lubinitsky</span>
+<span class="comment">% AEE 342 - HW6: Incompressible Flow over Airfoils (2)</span>
+<span class="comment">% 02/25/15</span>
+
+clear <span class="string">all</span>
+close <span class="string">all</span>
+clc
+</pre><h2>Governing Equations<a name="2"></a></h2><p>NACA2412 mean camber line given by:</p><p><img src="HW6_eq19304.png" alt="$$ \frac{z}{c} = 0.250\left[0.800\frac{x}{c} - \frac{x}{c}^2\right] \ for&#xA;\ 0 \leq \frac{x}{c} \leq 0.40 $$"></p><p><img src="HW6_eq84595.png" alt="$$ \frac{z}{c} = 0.111\left[0.200 + 0.800\frac{x}{c} -&#xA;\frac{x}{c}^2\right] \ for \ 0.40 \leq \frac{x}{c} \leq 1.00 $$"></p><p>And chord distribution chosen to be:</p><p><img src="HW6_eq20915.png" alt="$$ x = \frac{c}{2} \left(1 - \cos{\theta_0}\right) $$"></p><p>Vorticity distribution given by:</p><p><img src="HW6_eq78020.png" alt="$$ \gamma(\theta) = 2V_\infty \left(A_0 \frac{1 +&#xA;\cos{\theta}}{\sin{\theta}} + \sum_{n=1}^{\infty}A_n\sin{n\theta}\right)&#xA;$$"></p><p>With coefficients:</p><p><img src="HW6_eq76490.png" alt="$$ A_0 = \alpha - \frac{1}{\pi} \int_0^\pi \frac{dz}{dx}d\theta_0 $$"></p><p><img src="HW6_eq30821.png" alt="$$ A_n = \frac{2}{\pi} \int_0^\pi \frac{dz}{dx}\cos{n\theta_0}d\theta_0 $$"></p><h2>Definitions/Conversions<a name="3"></a></h2><pre class="codeinput">alpha = 4.5;                <span class="comment">% Degrees</span>
+m     = 2;                  <span class="comment">% Percent Chord</span>
+p     = 4;                  <span class="comment">% Tenth Chord</span>
+tt    = 12;                 <span class="comment">% Percent Chord</span>
+
+alpha = alpha * (pi / 180); <span class="comment">% Radians</span>
+m     = m * 0.01;           <span class="comment">% Fraction Chord</span>
+p     = p * 0.1;            <span class="comment">% Fraction Chord</span>
+tt    = tt * 0.01;          <span class="comment">% Fraction Chord</span>
+</pre><h2>Calculations<a name="4"></a></h2><pre class="codeinput">theta    = linspace(0, pi, 100);
+xCamber  = 0.5 * (1 - cos(theta));
+indexP   = find(xCamber &lt; p, 1, <span class="string">'last'</span>);
+
+dzdx1    = (1/5)  - (1/4) .* (1 - cos(theta(1          : indexP)));
+dzdx2    = 0.0888 - 0.111 .* (1 - cos(theta(indexP + 1 : end)));
+dzdx     = [dzdx1, dzdx2];
+dzdxcos1 = dzdx .* cos(    theta);
+dzdxcos2 = dzdx .* cos(2 * theta);
+
+A0       = alpha - (1/pi) * trapz(theta, dzdx);
+A1       =         (2/pi) * trapz(theta, dzdxcos1);
+A2       =         (2/pi) * trapz(theta, dzdxcos2);
+
+gamma0   = 2 .* (A0 .* ((1 + cos(theta)) ./ sin(theta)));
+gamma1   = 2 .* (A0 .* ((1 + cos(theta)) ./ sin(theta))<span class="keyword">...</span>
+              + (A1 .* sin(theta)));
+gamma2   = 2 .* (A0 .* ((1 + cos(theta)) ./ sin(theta))<span class="keyword">...</span>
+              + (A1 .* sin(theta)<span class="keyword">...</span>
+              + (A2 .* sin(2 .* theta))));
+</pre><h2>Plot<a name="5"></a></h2><pre class="codeinput">figure(1)
+hold <span class="string">on</span>
+title(<span class="string">'Vorticity Distribution, V_\infty = 1, \alpha = 4.5^\circ (NACA2412)'</span>)
+xlabel(<span class="string">'x'</span>)
+ylabel(<span class="string">'\gamma(x)'</span>)
+axis([0 1 0 2])
+plot(xCamber, gamma0, <span class="string">'-'</span>, <span class="string">'color'</span>, [1 0 0])
+plot(xCamber, gamma1, <span class="string">'--'</span>, <span class="string">'color'</span>, [0 1 0])
+plot(xCamber, gamma2, <span class="string">':'</span>, <span class="string">'color'</span>, [0 0 1])
+legend(<span class="string">'\gamma(x) -&gt; A_0'</span>, <span class="string">'\gamma(x) -&gt; A_0, A_1'</span>, <span class="string">'\gamma(x) -&gt; A_0, A_1, A_2'</span>)
+</pre><img vspace="5" hspace="5" src="HW6_01.png" alt=""> <h2>Results<a name="6"></a></h2><p>The three solutions are similar in that they all have vertical asymptotes approaching infinity at x = 0 and all converge to zero at x = 1. This is consistent with theory because the Kutta Condition is satisfied at the trailing edge. The asymptote at the leading edge exists because of a singulariy at x = 0. The three solutions differ in their accuracy, since the solution using only <img src="HW6_eq63411.png" alt="$$ A_0 $$"> gives the best fit using only sin/cos function. By introducing more leading-order terms, more periodic functions can be superimposed, allowing for a solution more capable of modelling the desired vorticity.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% Joel Lubinitsky
+% AEE 342 - HW6: Incompressible Flow over Airfoils (2)
+% 02/25/15
+
+clear all
+close all
+clc
+
+%% Governing Equations
+% NACA2412 mean camber line given by:
+%
+% $$ \frac{z}{c} = 0.250\left[0.800\frac{x}{c} - \frac{x}{c}^2\right] \ for
+% \ 0 \leq \frac{x}{c} \leq 0.40 $$
+%
+% $$ \frac{z}{c} = 0.111\left[0.200 + 0.800\frac{x}{c} -
+% \frac{x}{c}^2\right] \ for \ 0.40 \leq \frac{x}{c} \leq 1.00 $$
+%
+% And chord distribution chosen to be:
+%
+% $$ x = \frac{c}{2} \left(1 - \cos{\theta_0}\right) $$
+%
+% Vorticity distribution given by:
+%
+% $$ \gamma(\theta) = 2V_\infty \left(A_0 \frac{1 +
+% \cos{\theta}}{\sin{\theta}} + \sum_{n=1}^{\infty}A_n\sin{n\theta}\right)
+% $$
+%
+% With coefficients:
+%
+% $$ A_0 = \alpha - \frac{1}{\pi} \int_0^\pi \frac{dz}{dx}d\theta_0 $$
+%
+% $$ A_n = \frac{2}{\pi} \int_0^\pi \frac{dz}{dx}\cos{n\theta_0}d\theta_0 $$
+
+%% Definitions/Conversions
+alpha = 4.5;                % Degrees
+m     = 2;                  % Percent Chord
+p     = 4;                  % Tenth Chord
+tt    = 12;                 % Percent Chord
+
+alpha = alpha * (pi / 180); % Radians
+m     = m * 0.01;           % Fraction Chord
+p     = p * 0.1;            % Fraction Chord
+tt    = tt * 0.01;          % Fraction Chord
+
+%% Calculations
+theta    = linspace(0, pi, 100);
+xCamber  = 0.5 * (1 - cos(theta));
+indexP   = find(xCamber < p, 1, 'last');
+
+dzdx1    = (1/5)  - (1/4) .* (1 - cos(theta(1          : indexP)));
+dzdx2    = 0.0888 - 0.111 .* (1 - cos(theta(indexP + 1 : end)));
+dzdx     = [dzdx1, dzdx2];
+dzdxcos1 = dzdx .* cos(    theta);
+dzdxcos2 = dzdx .* cos(2 * theta);
+
+A0       = alpha - (1/pi) * trapz(theta, dzdx);
+A1       =         (2/pi) * trapz(theta, dzdxcos1);
+A2       =         (2/pi) * trapz(theta, dzdxcos2);
+
+gamma0   = 2 .* (A0 .* ((1 + cos(theta)) ./ sin(theta)));
+gamma1   = 2 .* (A0 .* ((1 + cos(theta)) ./ sin(theta))...
+              + (A1 .* sin(theta)));
+gamma2   = 2 .* (A0 .* ((1 + cos(theta)) ./ sin(theta))...
+              + (A1 .* sin(theta)...
+              + (A2 .* sin(2 .* theta))));
+
+%% Plot
+figure(1)
+hold on
+title('Vorticity Distribution, V_\infty = 1, \alpha = 4.5^\circ (NACA2412)')
+xlabel('x')
+ylabel('\gamma(x)')
+axis([0 1 0 2])
+plot(xCamber, gamma0, '-', 'color', [1 0 0])
+plot(xCamber, gamma1, 'REPLACE_WITH_DASH_DASH', 'color', [0 1 0])
+plot(xCamber, gamma2, ':', 'color', [0 0 1])
+legend('\gamma(x) -> A_0', '\gamma(x) -> A_0, A_1', '\gamma(x) -> A_0, A_1, A_2')
+
+%% Results
+% The three solutions are similar in that they all have vertical asymptotes
+% approaching infinity at x = 0 and all converge to zero at x = 1. This is
+% consistent with theory because the Kutta Condition is satisfied at the
+% trailing edge. The asymptote at the leading edge exists because of a
+% singulariy at x = 0. The three solutions differ in their accuracy, since
+% the solution using only $$ A_0 $$ gives the best fit using only sin/cos
+% function. By introducing more leading-order terms, more periodic
+% functions can be superimposed, allowing for a solution more capable of
+% modelling the desired vorticity.
+##### SOURCE END #####
+--></body></html>
