@@ -72,7 +72,7 @@ function Project2a(alpha, n_pan, m, p, tt)
     figure(1)
     hold on
     plot([X, X(1)], [Y, Y(1)], '-*')
-    plot(X(500), Y(500), 'o', 'color', [1 0 0])
+%     plot(X(500), Y(500), 'o', 'color', [1 0 0])
     title(strcat('Original configuration - NACA ', num2str(m * 100), num2str(p * 10), num2str(tt * 100)))
     xlabel('x')
     ylabel('y')
@@ -89,8 +89,7 @@ function Project2a(alpha, n_pan, m, p, tt)
     [xcp, ycp, Cp, lambda] = sourcePanel(Uinf, Vinf, X, Y);
     
         % Superposition of vortex at LE
-    strengthGamma = 0;
-%     strengthGamma = -2 * pi * Vvel(1, 0, Vinf, X, Y, lambda, strengthGamma)
+    strengthGamma = real(-2 * pi * sqrt(Vvel(1, 0, Vinf, X, Y, lambda, 0) .^ + Uvel(1, 0, Vinf, X, Y, lambda, 0) .^ 2))
     
     % integrate pressure coefficient for force coefficients
     CpUpper = Cp(1 : round(n_pan / 2) - 1);

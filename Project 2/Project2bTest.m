@@ -27,12 +27,11 @@ ttMaxNew = 2 * yThicknessMaxNew
 
 figure(1)
 hold on
+title('New vs Old Thickness Distribution')
+xlabel('X')
+ylabel('Y')
 axis equal
-plot(xCamber, yThickness, 'color', [0 0 1])
-plot(xCamber, -yThickness, 'color', [0 0 1])
-
-figure(1)
-hold on
-axis equal
-plot(xCamber, yThicknessNew, 'color', [1 0 0])
-plot(xCamber, -yThicknessNew, 'color', [1 0 0])
+plot(xCamber, yThickness, '-','color', [0 0 0])
+plot(xCamber, -yThickness, '-', 'color', [0 0 0])
+plot(xCamber, yThicknessNew, '--', 'color', [0 0 0])
+plot(xCamber, -yThicknessNew, '--', 'color', [0 0 0])
