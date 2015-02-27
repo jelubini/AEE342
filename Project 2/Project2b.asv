@@ -80,9 +80,15 @@ function Project2a(alpha, n_pan, m, p, tt)
     % define the freestream velocities in the x- and y- directions
     Uinf  = cos(alpha * pi/180);
     Vinf  = sin(alpha * pi/180);
+    
+
 
     % find the source panel strengths
     [xcp, ycp, Cp, lambda] = sourcePanel(Uinf, Vinf, X, Y);
+    
+        % Superposition of vortex at LE
+    strengthGamma = 0;
+%     strengthGamma = -2 * pi * Vvel(1, 0, Vinf, X, Y, lambda, strengthGamma)
     
     % integrate pressure coefficient for force coefficients
     CpUpper = Cp(1 : round(n_pan / 2) - 1);
@@ -141,7 +147,7 @@ function Project2a(alpha, n_pan, m, p, tt)
             ybeg = -0.8 + (i_sl-1) / (n_sl-1) * (0.8 - -0.8);
         
             [t_sl, xy_sl] = ode45(@(t, xy) strmLine(t, xy, Uinf, Vinf, ...
-                                    X, Y, lambda), [0, 10], [xbeg, ybeg]);
+                                    X, Y, lambda, strengthGamma), [0, 10], [xbeg, ybeg]);
             plot(xy_sl(:,1), xy_sl(:,2), '-g')
 
             % add bubbles to the streamlines (if desired)
@@ -160,8 +166,7 @@ function Project2a(alpha, n_pan, m, p, tt)
         axis([-0.5 1.5 -0.8 0.8])
         
         
-        % Superposition of vortex at LE
-%         strengthGammaLE = -2 * pi * Vvel(x, y, Vinf, X, Y, lambda)s
+
     
 end % function Project2jfd
 
@@ -268,7 +273,7 @@ end % function sourcePanel
 
 %--------------------------------------------------------------------
 
-function u = Uvel(x, y, Uinf, X, Y, lambda)
+function u = Uvel(x, y, Uinf, X, Y, lambda, strengthGamma)
     % Uvel - x-component of velocity at (x,y)
 
     % uniform flow
@@ -293,13 +298,14 @@ function u = Uvel(x, y, Uinf, X, Y, lambda)
         C = sin(-pi/2 - phi);
         
         u = u + lambda(j)/(2*pi) * (    C/2     .* log((S^2 + 2*A*S + B) ./ B) ...
-                                   + (D-A*C)./E .* (atan((S+A)./E) - atan(A./E)));
+                                   + (D-A*C)./E .* (atan((S+A)./E) - atan(A./E)))...
+                                   + (strengthGamma ./ (2 .* pi .* sqrt(x .^ 2 + y .^ 2)) .* sin(atan2(y, -x)));
     end % for j
 end % function Uvel
 
 %--------------------------------------------------------------------
 
-function v = Vvel(x, y, Vinf, X, Y, lambda)
+function v = Vvel(x, y, Vinf, X, Y, lambda, strengthGamma)
     % Vvel - y-component of velocity at (x,y)
 
     % uniform flow
@@ -325,13 +331,13 @@ function v = Vvel(x, y, Vinf, X, Y, lambda)
         
         v = v + lambda(j)/(2*pi) * (    C/2     .* log((S^2 + 2*A*S + B) ./ B) ...
                                    + (D-A*C)./E .* (atan((S+A)./E) - atan(A./E)))...
-                                   + (strengthGammaLE ./ (2 .* pi .* sqrt(x .^ 2 + y .^ 2)) .* cos(atan2(y, -x);
+                                   + (strengthGamma ./ (2 .* pi .* sqrt(x .^ 2 + y .^ 2)) .* cos(atan2(y, -x)));
     end % for j
 end % function Vvel
 
 %--------------------------------------------------------------------
 
-function uv = strmLine(t, xy, Uinf, Vinf, X, Y, lambda)
+function uv = strmLine(t, xy, Uinf, Vinf, X, Y, lambda, strengthGamma)
     % strmLine - vector velocity function (used in ode45)
 
     % extract the x and y coordinates
@@ -339,8 +345,8 @@ function uv = strmLine(t, xy, Uinf, Vinf, X, Y, lambda)
     y = xy(2);
 
     % get the velocities and return them as a vector
-    uv = [Uvel(x, y, Uinf, X, Y, lambda); ...
-         Vvel(x, y, Vinf, X, Y, lambda)];
+    uv = [Uvel(x, y, Uinf, X, Y, lambda, strengthGamma); ...
+         Vvel(x, y, Vinf, X, Y, lambda, strengthGamma)];
 end % function strmLine
   
 %--------------------------------------------------------------------
