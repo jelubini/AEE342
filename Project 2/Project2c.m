@@ -89,7 +89,9 @@ function Project2c(alpha, n_pan, m, p, tt)
     [xcp, ycp, Cp, lambda] = sourcePanel(Uinf, Vinf, X, Y);
     
         % Superposition of vortex at LE
-    strengthGamma = 0;
+    strengthGamma = 0.01;
+    xV1 = 0.25;
+    yV1 = 0;
     
 %     tolerKutta = 0.01;
 %     step = 0.01;
@@ -155,7 +157,7 @@ function Project2c(alpha, n_pan, m, p, tt)
             ybeg = -0.8 + (i_sl-1) / (n_sl-1) * (0.8 - -0.8);
         
             [t_sl, xy_sl] = ode45(@(t, xy) strmLine(t, xy, Uinf, Vinf, ...
-                                    X, Y, lambda, strengthGamma), [0, 10], [xbeg, ybeg]);
+                                    X, Y, lambda, strengthGamma, xV1, yV1), [0, 10], [xbeg, ybeg]);
             plot(xy_sl(:,1), xy_sl(:,2), '-g')
 
             % add bubbles to the streamlines (if desired)
@@ -281,7 +283,7 @@ end % function sourcePanel
 
 %--------------------------------------------------------------------
 
-function u = Uvel(x, y, Uinf, X, Y, lambda, strengthGamma)
+function u = Uvel(x, y, Uinf, X, Y, lambda, strengthGamma, xV1, yV1)
     % Uvel - x-component of velocity at (x,y)
 
     % uniform flow
@@ -307,13 +309,13 @@ function u = Uvel(x, y, Uinf, X, Y, lambda, strengthGamma)
         
         u = u + lambda(j)/(2*pi) * (    C/2     .* log((S^2 + 2*A*S + B) ./ B) ...
                                    + (D-A*C)./E .* (atan((S+A)./E) - atan(A./E)))...
-                                   + (strengthGamma ./ (2 .* pi .* sqrt(x .^ 2 + y .^ 2)) .* sin(atan2(y, -x)));
+                                   + ((strengthGamma .* (y - yV1))./ (2 .* pi .* sqrt((x - xV1) .^ 2 + (y - yV1).^ 2)));
     end % for j
 end % function Uvel
 
 %--------------------------------------------------------------------
 
-function v = Vvel(x, y, Vinf, X, Y, lambda, strengthGamma)
+function v = Vvel(x, y, Vinf, X, Y, lambda, strengthGamma, xV1, yV1)
     % Vvel - y-component of velocity at (x,y)
 
     % uniform flow
@@ -339,13 +341,13 @@ function v = Vvel(x, y, Vinf, X, Y, lambda, strengthGamma)
         
         v = v + lambda(j)/(2*pi) * (    C/2     .* log((S^2 + 2*A*S + B) ./ B) ...
                                    + (D-A*C)./E .* (atan((S+A)./E) - atan(A./E)))...
-                                   + (strengthGamma ./ (2 .* pi .* sqrt(x .^ 2 + y .^ 2)) .* cos(atan2(y, -x)));
+                                   + ((-strengthGamma .* (x - xV1))./ (2 .* pi .* sqrt((x - xV1) .^ 2 + (y - yV1).^ 2)));
     end % for j
 end % function Vvel
 
 %--------------------------------------------------------------------
 
-function uv = strmLine(t, xy, Uinf, Vinf, X, Y, lambda, strengthGamma)
+function uv = strmLine(t, xy, Uinf, Vinf, X, Y, lambda, strengthGamma, xV1, yV1)
     % strmLine - vector velocity function (used in ode45)
 
     % extract the x and y coordinates
@@ -353,8 +355,8 @@ function uv = strmLine(t, xy, Uinf, Vinf, X, Y, lambda, strengthGamma)
     y = xy(2);
 
     % get the velocities and return them as a vector
-    uv = [Uvel(x, y, Uinf, X, Y, lambda, strengthGamma); ...
-         Vvel(x, y, Vinf, X, Y, lambda, strengthGamma)];
+    uv = [Uvel(x, y, Uinf, X, Y, lambda, strengthGamma, xV1, yV1); ...
+         Vvel(x, y, Vinf, X, Y, lambda, strengthGamma, xV1, yV1)];
 end % function strmLine
   
 %--------------------------------------------------------------------
