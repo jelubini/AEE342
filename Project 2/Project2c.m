@@ -226,9 +226,9 @@ function [xcp, ycp, Cp, lambda] = sourcePanel(Uinf, Vinf, X, Y)
 
     % set up the Mnorm matrix (which is called "I" in Anderson) and
     %    Mtang matrix (which is called "I'" in Anderson)
-    Mnorm = zeros(n + 1, n + 1);
+    Mnorm = zeros(n, n);
     Mtang = zeros(n, n);
-    RHS   = zeros(n + 1, 1);
+    RHS   = zeros(n, 1);
 
     % normal velocity at ith control point
     for i = 1 : n
