@@ -11,7 +11,11 @@ function Project2c(alpha, n_pan, n_vort, m, p, tt)
     close all
     
 <<<<<<< HEAD
+<<<<<<< HEAD
     n_sl  =   20;                % number of streamlines
+=======
+    n_sl  =   5;                % number of streamlines
+>>>>>>> parent of c809847... Holy Fuck 1 Vortex
 =======
     n_sl  =   5;                % number of streamlines
 >>>>>>> parent of c809847... Holy Fuck 1 Vortex
@@ -139,6 +143,9 @@ function Project2c(alpha, n_pan, n_vort, m, p, tt)
 =======
     [xcp, ycp, Cp, lambda, strengthGamma] = sourcePanel(Uinf, Vinf, X, Y, xV1, yV1);
 %     strengthGamma = 0.05;    
+<<<<<<< HEAD
+>>>>>>> parent of c809847... Holy Fuck 1 Vortex
+=======
 >>>>>>> parent of c809847... Holy Fuck 1 Vortex
 
     testKutta = [Uvel(1, 0, Uinf, X, Y, lambda, strengthGamma, xV1, yV1), Vvel(1, 0, Uinf, X, Y, lambda, strengthGamma, xV1, yV1)]
@@ -306,6 +313,7 @@ function [xcp, ycp, Cp, lambda, strengthGamma] = sourcePanel(Uinf, Vinf, X, Y, x
                 Mnorm(i,j) = pi;
                 Mtang(i,j) = 0;
 <<<<<<< HEAD
+<<<<<<< HEAD
             elseif (j == n + 1)
                 if n_vort == 1
                     
@@ -318,6 +326,8 @@ function [xcp, ycp, Cp, lambda, strengthGamma] = sourcePanel(Uinf, Vinf, X, Y, x
                 else
                     error('Can only calculate vortex strengths for 1 or 4 vorticies')
                 end
+=======
+>>>>>>> parent of c809847... Holy Fuck 1 Vortex
 =======
 >>>>>>> parent of c809847... Holy Fuck 1 Vortex
             else
@@ -376,6 +386,7 @@ function [xcp, ycp, Cp, lambda, strengthGamma] = sourcePanel(Uinf, Vinf, X, Y, x
     strengthGamma = lambda(end)
     % compute the tangential velocities and hence the Cp
 <<<<<<< HEAD
+<<<<<<< HEAD
     
     if n_vort == 1
         
@@ -389,6 +400,9 @@ function [xcp, ycp, Cp, lambda, strengthGamma] = sourcePanel(Uinf, Vinf, X, Y, x
         error('Can only calculate vortex strengths for 1 or 4 vorticies')
     end
     
+=======
+    V = Uinf*cos(phi) + Vinf*sin(phi);
+>>>>>>> parent of c809847... Holy Fuck 1 Vortex
 =======
     V = Uinf*cos(phi) + Vinf*sin(phi);
 >>>>>>> parent of c809847... Holy Fuck 1 Vortex
@@ -419,10 +433,14 @@ function u = Uvel(x, y, Uinf, X, Y, lambda, strengthGamma, xV, yV, n_vort)
 
     % uniform flow
 <<<<<<< HEAD
+<<<<<<< HEAD
     
     if n_vort == 1
         
         u = (Uinf + (strengthGamma ./ (2 .* pi)) .* (y - yV1)./ ((x - xV1) .^ 2 + (y - yV1).^ 2)) .* ones(size(x)) ;
+=======
+    u = Uinf * ones(size(x));
+>>>>>>> parent of c809847... Holy Fuck 1 Vortex
 =======
     u = Uinf * ones(size(x));
 >>>>>>> parent of c809847... Holy Fuck 1 Vortex
@@ -466,9 +484,13 @@ function v = Vvel(x, y, Vinf, X, Y, lambda, strengthGamma, xV, yV, n_vort)
 
     % uniform flow
 <<<<<<< HEAD
+<<<<<<< HEAD
     if n_vort == 1
         
         v = (Vinf + (-strengthGamma ./ (2 .* pi)) .* (x - xV1)./ ((x - xV1) .^ 2 + (y - yV1).^ 2)) .* ones(size(x));
+=======
+    v = Vinf * ones(size(x));
+>>>>>>> parent of c809847... Holy Fuck 1 Vortex
 =======
     v = Vinf * ones(size(x));
 >>>>>>> parent of c809847... Holy Fuck 1 Vortex
