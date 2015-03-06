@@ -10,15 +10,8 @@ function Project2c(alpha, n_pan, n_vort, m, p, tt)
 
     close all
     
-<<<<<<< HEAD
-<<<<<<< HEAD
+
     n_sl  =   20;                % number of streamlines
-=======
-    n_sl  =   5;                % number of streamlines
->>>>>>> parent of c809847... Holy Fuck 1 Vortex
-=======
-    n_sl  =   5;                % number of streamlines
->>>>>>> parent of c809847... Holy Fuck 1 Vortex
     dtbub = 0.25;                % time increment between bubbles
     xmin  = -0.5;                % mininum X in domain
     xmax  = +1.5;                % maximum X in domain
