@@ -72,7 +72,6 @@ function Project2c(alpha, n_pan, m, p, tt)
     figure(1)
     hold on
     plot([X, X(1)], [Y, Y(1)], '-*')
-%     plot(X(500), Y(500), 'o', 'color', [1 0 0])
     title(strcat('Original configuration - NACA ', num2str(m * 100), num2str(p * 10), num2str(tt * 100)))
     xlabel('x')
     ylabel('y')
@@ -83,16 +82,18 @@ function Project2c(alpha, n_pan, m, p, tt)
     Uinf  = cos(alpha * pi/180);
     Vinf  = sin(alpha * pi/180);
     
+        % Superposition of vortex at LE
 
+    indexQuarterChord = find(xCamber <= 0.25, 1, 'last');
+    
+    xV1 = xCamber(indexQuarterChord);
+    yV1 = yCamber(indexQuarterChord);
 
     % find the source panel strengths
-    [xcp, ycp, Cp, lambda] = sourcePanel(Uinf, Vinf, X, Y);
-    
-        % Superposition of vortex at LE
-    strengthGamma = 0.01;
-    xV1 = 0.25;
-    yV1 = 0;
-    
+    [xcp, ycp, Cp, lambda, strengthGamma] = sourcePanel(Uinf, Vinf, X, Y, xV1, yV1);
+%     strengthGamma = 0.05;    
+
+    testKutta = [Uvel(1, 0, Uinf, X, Y, lambda, strengthGamma, xV1, yV1), Vvel(1, 0, Uinf, X, Y, lambda, strengthGamma, xV1, yV1)]
 %     tolerKutta = 0.01;
 %     step = 0.01;
 %     
@@ -182,7 +183,7 @@ end % function Project2jfd
 
 %--------------------------------------------------------------------
 
-function [xcp, ycp, Cp, lambda] = sourcePanel(Uinf, Vinf, X, Y)
+function [xcp, ycp, Cp, lambda, strengthGamma] = sourcePanel(Uinf, Vinf, X, Y, xV1, yV1)
     % sourcePanel - source panel method in two dimensions
     %    written by John Dannenhoffer
     %
@@ -228,9 +229,9 @@ function [xcp, ycp, Cp, lambda] = sourcePanel(Uinf, Vinf, X, Y)
 
     % set up the Mnorm matrix (which is called "I" in Anderson) and
     %    Mtang matrix (which is called "I'" in Anderson)
-    Mnorm = zeros(n, n);
+    Mnorm = zeros(n + 1, n + 1);
     Mtang = zeros(n, n);
-    RHS   = zeros(n, 1);
+    RHS   = zeros(n + 1, 1);
 
     % normal velocity at ith control point
     for i = 1 : n
@@ -255,10 +256,29 @@ function [xcp, ycp, Cp, lambda] = sourcePanel(Uinf, Vinf, X, Y)
             end % if
         end % for j
     end % for i
+    
+    % Add stuff
+    for i = [1 : n]
+    
+        Mnorm(i, n + 1) = ((xV1 - xcp(i)) ./ ((xcp(i) - xV1) .^ 2 + (ycp(i) - yV1).^ 2)) .* cos(phi(i)) + ((yV1 - ycp(i)) ./ ((xcp(i) - xV1) .^ 2 + (ycp(i) - yV1).^ 2)) .* sin(phi(i));
+        
+    end
+    
+    for j = [1 : n]
+        
+        Mnorm(n + 1, j) = Mtang(n ./ 2, j) + Mtang(n ./ 2 + 1, j);
+        
+    end
+    
+    Mnorm(n + 1, n + 1) = ((xV1 - xcp(n ./ 2)) ./ ((xcp(n ./ 2) - xV1) .^ 2 + (ycp(n ./ 2) - yV1).^ 2)) .* sin(phi(n ./ 2)) + ((ycp(n ./ 2) - yV1) ./ ((xcp(n ./ 2) - xV1) .^ 2 + (ycp(n ./ 2) - yV1).^ 2)) .* cos(phi(n ./ 2))...
+                        + ((xV1 - xcp(n ./ 2 + 1)) ./ ((xcp(n ./ 2 + 1) - xV1) .^ 2 + (ycp(n ./ 2 + 1) - yV1).^ 2)) .* sin(phi(n ./ 2 + 1)) + ((ycp(n ./ 2 + 1) - yV1) ./ ((xcp(n ./ 2 + 1) - xV1) .^ 2 + (ycp(n ./ 2 + 1) - yV1).^ 2)) .* cos(phi(n ./ 2 + 1));
+    
+    RHS(n + 1) = -2 * pi * (Vinf * sin(phi(n ./ 2)) + Uinf * cos(phi(n ./ 2)))...
+               + -2 * pi * (Vinf * sin(phi(n ./ 2 + 1)) + Uinf * cos(phi(n ./ 2 + 1)));
 
     % solve for the source strengths
     lambda = Mnorm \ RHS;
-
+    strengthGamma = lambda(end)
     % compute the tangential velocities and hence the Cp
     V = Uinf*cos(phi) + Vinf*sin(phi);
     for j = 1 : n
@@ -275,7 +295,7 @@ function [xcp, ycp, Cp, lambda] = sourcePanel(Uinf, Vinf, X, Y)
     xStagnation = X(indexStagnation)
     plot(X(indexStagnation), V(indexStagnation), 'o', 'color', [1 0 0])
 
-    check = sum(S*lambda);
+    check = sum(S*lambda(1 : n));
     if (abs(check) > 1.0e-10)
         fprintf(1, 'sum of sources = %f (should be 0)\n', check);
     end % if
@@ -290,7 +310,7 @@ function u = Uvel(x, y, Uinf, X, Y, lambda, strengthGamma, xV1, yV1)
     u = Uinf * ones(size(x));
 
     % loop through source panels
-    n = length(lambda);
+    n = length(lambda) - 1;
     for j = 1 : n
         if (j < n)
             jp1 = j + 1;
@@ -309,7 +329,7 @@ function u = Uvel(x, y, Uinf, X, Y, lambda, strengthGamma, xV1, yV1)
         
         u = u + lambda(j)/(2*pi) * (    C/2     .* log((S^2 + 2*A*S + B) ./ B) ...
                                    + (D-A*C)./E .* (atan((S+A)./E) - atan(A./E)))...
-                                   + ((strengthGamma .* (y - yV1))./ (2 .* pi .* sqrt((x - xV1) .^ 2 + (y - yV1).^ 2)));
+                                   + (strengthGamma ./ (2 .* pi)) .* (y - yV1)./ ((x - xV1) .^ 2 + (y - yV1).^ 2);
     end % for j
 end % function Uvel
 
@@ -322,7 +342,7 @@ function v = Vvel(x, y, Vinf, X, Y, lambda, strengthGamma, xV1, yV1)
     v = Vinf * ones(size(x));
 
     % loop through source panels
-    n = length(lambda);
+    n = length(lambda) - 1;
     for j = 1 : n
         if (j < n)
             jp1 = j + 1;
@@ -341,7 +361,7 @@ function v = Vvel(x, y, Vinf, X, Y, lambda, strengthGamma, xV1, yV1)
         
         v = v + lambda(j)/(2*pi) * (    C/2     .* log((S^2 + 2*A*S + B) ./ B) ...
                                    + (D-A*C)./E .* (atan((S+A)./E) - atan(A./E)))...
-                                   + ((-strengthGamma .* (x - xV1))./ (2 .* pi .* sqrt((x - xV1) .^ 2 + (y - yV1).^ 2)));
+                                   + (-strengthGamma ./ (2 .* pi)) .* (x - xV1)./ ((x - xV1) .^ 2 + (y - yV1).^ 2);
     end % for j
 end % function Vvel
 
