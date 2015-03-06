@@ -10,7 +10,11 @@ function Project2c(alpha, n_pan, n_vort, m, p, tt)
 
     close all
     
+<<<<<<< HEAD
     n_sl  =   20;                % number of streamlines
+=======
+    n_sl  =   5;                % number of streamlines
+>>>>>>> parent of c809847... Holy Fuck 1 Vortex
     dtbub = 0.25;                % time increment between bubbles
     xmin  = -0.5;                % mininum X in domain
     xmax  = +1.5;                % maximum X in domain
@@ -130,8 +134,20 @@ function Project2c(alpha, n_pan, n_vort, m, p, tt)
 
 
     % find the source panel strengths
+<<<<<<< HEAD
     [xcp, ycp, Cp, lambda, strengthGamma] = sourcePanel(Uinf, Vinf, X, Y, xV, yV);
+=======
+    [xcp, ycp, Cp, lambda, strengthGamma] = sourcePanel(Uinf, Vinf, X, Y, xV1, yV1);
+%     strengthGamma = 0.05;    
+>>>>>>> parent of c809847... Holy Fuck 1 Vortex
 
+    testKutta = [Uvel(1, 0, Uinf, X, Y, lambda, strengthGamma, xV1, yV1), Vvel(1, 0, Uinf, X, Y, lambda, strengthGamma, xV1, yV1)]
+%     tolerKutta = 0.01;
+%     step = 0.01;
+%     
+%     while sqrt(Uvel(1, 0, Uinf, X, Y, lambda, strengthGamma) ^ 2 + Vvel(1, 0, Uinf, X, Y, lambda, strengthGamma) ^ 2) > tolerKutta
+%         if Vvel(1, 0, Uinf, X, Y, lambda, strengthGamma) < 0
+%             
     
     % integrate pressure coefficient for force coefficients
     CpUpper = Cp(1 : round(n_pan / 2) - 1);
@@ -156,7 +172,7 @@ function Project2c(alpha, n_pan, n_vort, m, p, tt)
         title(strcat('AEE342 - Project2a, \alpha = ', num2str(alpha), '^\circ'))
         xlabel('Panel number')
         ylabel('Source panel strength (lambda)')
-        axis([0 140 -1.5 2])
+        axis([0 140 -20 20])
         grid on
     
     % plots the surface Cp distribution (figure 2, subplots 2 and 3)
@@ -167,7 +183,7 @@ function Project2c(alpha, n_pan, n_vort, m, p, tt)
         xlabel('x (control points)')
         ylabel('-Cp')
         xlim([-0.5 1.5])
-        ylim([-1 2])
+        ylim([-1 4])
         grid on
     
     subplot(2,2,3)
@@ -177,7 +193,7 @@ function Project2c(alpha, n_pan, n_vort, m, p, tt)
         xlabel('-Cp')
         ylabel('y (control points)')
         ylim([-0.8 0.8])
-        xlim([-1 2])
+        xlim([-1 4])
         grid on
 
     % plot of configuration and streamlines (figure 2, subplot 4)
@@ -285,10 +301,11 @@ function [xcp, ycp, Cp, lambda, strengthGamma] = sourcePanel(Uinf, Vinf, X, Y, x
         RHS(i) = -2 * pi * (Vinf * cos(phi(i)) - Uinf * sin(phi(i)));
     
         % contribution of jth panel
-        for j = 1 : n + 1
+        for j = 1 : n
             if (i == j)
                 Mnorm(i,j) = pi;
                 Mtang(i,j) = 0;
+<<<<<<< HEAD
             elseif (j == n + 1)
                 if n_vort == 1
                     
@@ -301,6 +318,8 @@ function [xcp, ycp, Cp, lambda, strengthGamma] = sourcePanel(Uinf, Vinf, X, Y, x
                 else
                     error('Can only calculate vortex strengths for 1 or 4 vorticies')
                 end
+=======
+>>>>>>> parent of c809847... Holy Fuck 1 Vortex
             else
                 A = - (xcp(i) - X(j)) * cos(phi(j)) - (ycp(i) - Y(j)) * sin(phi(j));
                 B =   (xcp(i) - X(j)) ^ 2           + (ycp(i) - Y(j)) ^ 2;
@@ -317,11 +336,11 @@ function [xcp, ycp, Cp, lambda, strengthGamma] = sourcePanel(Uinf, Vinf, X, Y, x
     end % for i
     
     % Add stuff
-%     for i = [1 : n]
-%     
-%         Mnorm(i, n + 1) = ((xV1 - xcp(i)) ./ ((xcp(i) - xV1) .^ 2 + (ycp(i) - yV1).^ 2)) .* cos(phi(i)) + ((yV1 - ycp(i)) ./ ((xcp(i) - xV1) .^ 2 + (ycp(i) - yV1).^ 2)) .* sin(phi(i));
-%         
-%     end
+    for i = [1 : n]
+    
+        Mnorm(i, n + 1) = ((xV1 - xcp(i)) ./ ((xcp(i) - xV1) .^ 2 + (ycp(i) - yV1).^ 2)) .* cos(phi(i)) + ((yV1 - ycp(i)) ./ ((xcp(i) - xV1) .^ 2 + (ycp(i) - yV1).^ 2)) .* sin(phi(i));
+        
+    end
     
     for j = [1 : n]
         
@@ -355,8 +374,8 @@ function [xcp, ycp, Cp, lambda, strengthGamma] = sourcePanel(Uinf, Vinf, X, Y, x
     % solve for the source strengths
     lambda = Mnorm \ RHS;
     strengthGamma = lambda(end)
-    lambda = lambda(1 : n);
     % compute the tangential velocities and hence the Cp
+<<<<<<< HEAD
     
     if n_vort == 1
         
@@ -370,6 +389,9 @@ function [xcp, ycp, Cp, lambda, strengthGamma] = sourcePanel(Uinf, Vinf, X, Y, x
         error('Can only calculate vortex strengths for 1 or 4 vorticies')
     end
     
+=======
+    V = Uinf*cos(phi) + Vinf*sin(phi);
+>>>>>>> parent of c809847... Holy Fuck 1 Vortex
     for j = 1 : n
         V = V + lambda(j) ./ (2*pi) .* Mtang(:,j)';
     end % for
@@ -396,10 +418,14 @@ function u = Uvel(x, y, Uinf, X, Y, lambda, strengthGamma, xV, yV, n_vort)
     % Uvel - x-component of velocity at (x,y)
 
     % uniform flow
+<<<<<<< HEAD
     
     if n_vort == 1
         
         u = (Uinf + (strengthGamma ./ (2 .* pi)) .* (y - yV1)./ ((x - xV1) .^ 2 + (y - yV1).^ 2)) .* ones(size(x)) ;
+=======
+    u = Uinf * ones(size(x));
+>>>>>>> parent of c809847... Holy Fuck 1 Vortex
 
     elseif n_vort == 4
         
@@ -410,7 +436,7 @@ function u = Uvel(x, y, Uinf, X, Y, lambda, strengthGamma, xV, yV, n_vort)
     end
     
     % loop through source panels
-    n = length(lambda);
+    n = length(lambda) - 1;
     for j = 1 : n
         if (j < n)
             jp1 = j + 1;
@@ -428,7 +454,8 @@ function u = Uvel(x, y, Uinf, X, Y, lambda, strengthGamma, xV, yV, n_vort)
         C = sin(-pi/2 - phi);
         
         u = u + lambda(j)/(2*pi) * (    C/2     .* log((S^2 + 2*A*S + B) ./ B) ...
-                                   + (D-A*C)./E .* (atan((S+A)./E) - atan(A./E)));
+                                   + (D-A*C)./E .* (atan((S+A)./E) - atan(A./E)))...
+                                   + (strengthGamma ./ (2 .* pi)) .* (y - yV1)./ ((x - xV1) .^ 2 + (y - yV1).^ 2);
     end % for j
 end % function Uvel
 
@@ -438,9 +465,13 @@ function v = Vvel(x, y, Vinf, X, Y, lambda, strengthGamma, xV, yV, n_vort)
     % Vvel - y-component of velocity at (x,y)
 
     % uniform flow
+<<<<<<< HEAD
     if n_vort == 1
         
         v = (Vinf + (-strengthGamma ./ (2 .* pi)) .* (x - xV1)./ ((x - xV1) .^ 2 + (y - yV1).^ 2)) .* ones(size(x));
+=======
+    v = Vinf * ones(size(x));
+>>>>>>> parent of c809847... Holy Fuck 1 Vortex
 
     elseif n_vort == 4
         
@@ -450,7 +481,7 @@ function v = Vvel(x, y, Vinf, X, Y, lambda, strengthGamma, xV, yV, n_vort)
     end
     
     % loop through source panels
-    n = length(lambda);
+    n = length(lambda) - 1;
     for j = 1 : n
         if (j < n)
             jp1 = j + 1;
@@ -468,7 +499,8 @@ function v = Vvel(x, y, Vinf, X, Y, lambda, strengthGamma, xV, yV, n_vort)
         C = sin(- phi);
         
         v = v + lambda(j)/(2*pi) * (    C/2     .* log((S^2 + 2*A*S + B) ./ B) ...
-                                   + (D-A*C)./E .* (atan((S+A)./E) - atan(A./E)));
+                                   + (D-A*C)./E .* (atan((S+A)./E) - atan(A./E)))...
+                                   + (-strengthGamma ./ (2 .* pi)) .* (x - xV1)./ ((x - xV1) .^ 2 + (y - yV1).^ 2);
     end % for j
 end % function Vvel
 
